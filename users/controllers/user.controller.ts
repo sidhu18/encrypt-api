@@ -23,4 +23,24 @@ class UserController {
         res.send(201).send({ id: userId });
     }
 
+    async patch(req: express.Request, res: express.Response) {
+        if (req.body.password) {
+            req.body.password = await argon2.hash(req.body.password);
+        }
+        log(await userService.patchById(req.body.id, req.body));
+        res.send(204).send();
+    }
+
+    async put(req: express.Request, res: express.Response) {
+        req.body.password = argon2.hash(req.body.password);
+        log(await userService.putById(req.body.id, req.body));
+        res.send(204).send();
+    }
+
+    async removeUser(req: express.Request, res: express.Response) {
+        log(await userService.deleteById(req.body.id));
+        res.status(204).send();
+    }
 }
+
+export default new UserController();
