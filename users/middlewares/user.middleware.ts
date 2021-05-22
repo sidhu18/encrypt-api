@@ -15,8 +15,9 @@ class UserMiddleware {
         if (req.body && req.body.email && req.body.password) {
             next();
         } else {
-            res.send(400).send({
+            res.status(400).send({
                 error: "Missing required fields",
+                body: req.body,
             });
         }
     }

@@ -1,5 +1,8 @@
 import { CommonRoutesConfig } from "../common/common.routes.config"
 import express from "express";
+import userController from "./controllers/user.controller";
+import userMiddleware from "./middlewares/user.middleware";
+import userService from "./services/user.service";
 
 export class UserRoutes extends CommonRoutesConfig {
 
@@ -10,12 +13,12 @@ export class UserRoutes extends CommonRoutesConfig {
     configureRoutes(): express.Application {
 
         this.app.route("/users")
-            .get((ṛeq: express.Request, res: express.Response) => {
-                res.status(200).send("List of users");
-            })
-            .post((req: express.Request, res: express.Response) => {
-                res.status(200).send("User posted");
-            });
+            .get(userController.listUsers)
+            .post(
+                userMiddleware.validateRequiredUserBodyFields,
+                userMiddleware.validateSameEmailDoesntExist,
+                userController.createUser
+            );
 
         this.app.route(`/users/:userId`)
             .all((req: express.Request, res: express.Response, next: express.NextFunction) => {
